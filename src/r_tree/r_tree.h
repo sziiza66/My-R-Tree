@@ -103,7 +103,11 @@ public:
         return Proxy(*this, result);
     }
 
-    // Proxy SearchWindow(const BBox& b) const;
+    Proxy SearchWindow(const BBox& b) const {
+        std::vector<size_t> result;
+        DoSearchWindow(result, b, root_index_);
+        return Proxy(*this, result);
+    }
 
     const Point& operator[](size_t index) const {
         return *points_[index];
@@ -231,6 +235,22 @@ private:
             }
         }
         return result;
+    }
+
+    void DoSearchWindow(std::vector<size_t>& result, const BBox& b, size_t node_ind) const {
+        if (nodes_[node_ind].is_leaf) {
+            for (size_t child : nodes_[node_ind].children) {
+                if (AreIntersecting(b, *points_[child])) {
+                    result.emplace_back(child);
+                }
+            }
+        } else {
+            for (size_t child : nodes_[node_ind].children) {
+                if (AreIntersecting(b, *nodes_[child].bbox)) {
+                    DoSearchWindow(result, b, child);
+                }
+            }
+        }
     }
 
 private:

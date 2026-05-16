@@ -133,6 +133,16 @@ bool AreIntersecting(const BoundingBox<D>& b1, const BoundingBox<D>& b2) {
 }
 
 template <size_t D>
+bool AreIntersecting(const BoundingBox<D>& b, const Vector<D>& p) {
+    for (size_t i = 0; i < D; ++i) {
+        if (p[i] > b.Max(i) || p[i] < b.Min(i)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <size_t D>
 Scalar GetDistSq(const Vector<D>& p1, const Vector<D>& p2) {
     Scalar result = 0;
     for (size_t i = 0; i < D; ++i) {
